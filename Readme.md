@@ -45,16 +45,6 @@ Handles database connection pooling and helper methods for JDBC queries and upda
 Server.java
 Initializes the HTTP server, serves static files, parses JSON requests/responses, and routes paths to appropriate handlers:
 
-/api/auth/register (POST) - Register a new user
-/api/auth/login (POST) - Authenticate a user
-/api/tasks (GET/POST) - Get daily tasks or assign a task (Admin)
-/api/tasks/submit (POST) - Submit a daily task (Student)
-/api/tests (GET/POST) - Get available tests or create a test (Admin)
-/api/tests/questions (GET) - Get questions for a test (Student)
-/api/tests/submit (POST) - Submit mock test answers and calculate score (Student)
-/api/scores (GET) - Get score tracking details for stats/dashboard
-/api/feedback (GET/POST) - Get feedback or submit feedback (Admin)
-Frontend (SPA Dashboard)
 We will build a high-fidelity Single Page Application (SPA) dashboard. Based on the logged-in user's role (admin or student), the UI will adapt dynamically to display relevant tabs and panels.
 
 [NEW] 
