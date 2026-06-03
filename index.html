@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Training Portal</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div id="app-toast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-body-text">
+                    Hello, world! This is a toast message.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Container (Login / Register) -->
+    <div id="auth-container" class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+        <!-- Login Card -->
+        <div id="login-card" class="card auth-card w-100" style="max-width: 480px;">
+            <div class="card-body p-4 p-sm-5">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mb-3">
+                        <i class="fa-solid fa-graduation-cap text-gradient"></i>
+                    </div>
+                    <h2 class="auth-title fw-bold">Placement Portal</h2>
+                    <p class="text-muted">Accelerate your career preparation</p>
+                </div>
+                
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="login-username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user text-muted"></i></span>
+                            <input type="text" class="form-control" id="login-username" placeholder="Enter username" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="login-password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="password" class="form-control" id="login-password" placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="login-submit-btn" class="btn btn-primary w-100 py-2.5 mb-3 fw-semibold">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-4 pt-3 border-top border-light border-opacity-10 text-center">
+                    <span class="text-muted small d-block mb-2"><i class="fa-solid fa-bolt me-1 text-warning"></i>Quick Demo Login</span>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-sm btn-outline-primary px-3" id="demo-student-btn">
+                            <i class="fa-solid fa-user-graduate me-1"></i>Student Demo
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-info px-3" id="demo-admin-btn">
+                            <i class="fa-solid fa-user-gear me-1"></i>Admin Demo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p class="mb-0 text-muted small">Don't have an account? <a href="#" id="show-register-link" class="fw-semibold text-primary">Register Here</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Card -->
+        <div id="register-card" class="card auth-card w-100 d-none" style="max-width: 550px;">
+            <div class="card-body p-4 p-sm-5">
+                <div class="text-center mb-4">
+                    <h2 class="auth-title fw-bold">Create Account</h2>
+                    <p class="text-muted">Register to start your placement training</p>
+                </div>
+                
+                <form id="register-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="reg-username" class="form-label">Username *</label>
+                            <input type="text" class="form-control" id="reg-username" placeholder="e.g. alice123" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="reg-password" class="form-label">Password *</label>
+                            <input type="password" class="form-control" id="reg-password" placeholder="Min 6 characters" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="reg-fullname" class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" id="reg-fullname" placeholder="e.g. Alice Smith" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg-email" class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="reg-email" placeholder="e.g. alice@example.com" required>
+                    </div>
+
+                    <div class="row" id="student-only-fields">
+                        <div class="col-md-6 mb-3">
+                            <label for="reg-roll" class="form-label">Roll Number *</label>
+                            <input type="text" class="form-control" id="reg-roll" placeholder="e.g. 2026CSE01" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="reg-dept" class="form-label">Department *</label>
+                            <select class="form-select" id="reg-dept" required>
+                                <option value="" disabled selected>Select Dept</option>
+                                <option value="Computer Science">Computer Science & Eng</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">Electronics & Comm Eng</option>
+                                <option value="Electrical">Electrical & Electronics Eng</option>
+                                <option value="Mechanical">Mechanical Engineering</option>
+                                <option value="Civil">Civil Engineering</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="register-submit-btn" class="btn btn-primary w-100 py-2.5 mb-3 fw-semibold">
+                        <i class="fa-solid fa-user-plus me-2"></i>Register
+                    </button>
+                </form>
+                
+                <div class="text-center mt-2">
+                    <p class="mb-0 text-muted small">Already have an account? <a href="#" id="show-login-link" class="fw-semibold text-primary">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div id="dashboard-container" class="container-fluid d-none px-0 min-vh-100">
+        <div class="row g-0 min-vh-100">
+            <!-- Sidebar -->
+            <div id="sidebar" class="col-lg-3 col-xl-2 d-flex flex-column p-3 text-white sidebar-glass">
+                <div class="d-flex align-items-center mb-4 px-2 py-3 border-bottom border-light border-opacity-10">
+                    <i class="fa-solid fa-graduation-cap text-primary fs-3 me-2"></i>
+                    <span class="fs-4 fw-bold tracking-tight">PrepPortal</span>
+                </div>
+
+                <!-- User Profile Summary in Sidebar -->
+                <div class="profile-card-sidebar p-3 mb-4 rounded-3 d-flex align-items-center">
+                    <div class="avatar-container me-3">
+                        <i class="fa-solid fa-circle-user fs-1 text-primary"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <h6 class="mb-0 fw-semibold text-truncate" id="user-display-name">Alice Smith</h6>
+                        <span class="badge bg-primary text-capitalize small" id="user-display-role">Student</span>
+                        <div class="text-muted small mt-1 text-truncate" id="user-display-sub">2026CSE01</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Navigation (Student vs Admin) -->
+                <ul class="nav nav-pills flex-column mb-auto" id="dashboard-menu">
+                    <!-- Navigation links injected via JavaScript -->
+                </ul>
+
+                <hr class="border-light border-opacity-10">
+                <button class="btn btn-logout w-100 text-start d-flex align-items-center py-2.5 px-3 rounded-3" id="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket me-3 text-danger"></i>Sign Out
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9 col-xl-10 d-flex flex-column content-area p-3 p-md-4 p-xl-5">
+                <!-- Header -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center pb-4 mb-4 border-bottom border-secondary border-opacity-10 gap-3">
+                    <div>
+                        <h1 class="h3 fw-bold mb-1" id="page-header-title">Dashboard Overview</h1>
+                        <p class="text-muted mb-0 small" id="page-header-subtitle">Welcome back to your preparation portal.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="current-time-badge px-3 py-2 rounded-3 text-muted border border-secondary border-opacity-10 small">
+                            <i class="fa-regular fa-calendar me-2"></i><span id="header-date-display">June 3, 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Panes -->
+                <div class="flex-grow-1" id="main-content-panels">
+                    <!-- ---------------------------------------------------- -->
+                    <!-- STUDENT VIEWS -->
+                    <!-- ---------------------------------------------------- -->
+                    
+                    <!-- Panel 1: Student Dashboard Overview -->
+                    <div id="panel-student-dashboard" class="dashboard-panel d-none">
+                        <!-- Daily Prep Tip -->
+                        <div class="card stat-card p-4 rounded-4 mb-4 border-0">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="stat-icon-wrapper bg-warning bg-opacity-15 text-warning">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h6 class="mb-1 fw-bold text-white">Daily Placement Tip</h6>
+                                    <p class="text-muted small mb-0" id="daily-tip-text">"Always explain your brute-force logic before optimizing. It shows strong engineering reasoning!"</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Daily Tasks</span>
+                                        <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                                            <i class="fa-solid fa-list-check"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-student-tasks-completed">0/0</h3>
+                                    <p class="text-muted small mb-0">Completed tasks</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Mock Tests Taken</span>
+                                        <div class="stat-icon-wrapper bg-success-subtle text-success">
+                                            <i class="fa-solid fa-square-poll-vertical"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-student-tests-count">0</h3>
+                                    <p class="text-muted small mb-0">Completed attempts</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Avg Test Score</span>
+                                        <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+                                            <i class="fa-solid fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-student-avg-score">0%</h3>
+                                    <p class="text-muted small mb-0">Across all mock tests</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Interview Feedback</span>
+                                        <div class="stat-icon-wrapper bg-info-subtle text-info">
+                                            <i class="fa-solid fa-comments"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-student-feedback-count">0</h3>
+                                    <p class="text-muted small mb-0">Recruiter evaluations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphical and Recent Activity Row -->
+                        <div class="row g-4">
+                            <div class="col-lg-7">
+                                <div class="chart-card p-4 rounded-4 mb-4">
+                                    <h5 class="fw-bold mb-4">Mock Test Score Performance</h5>
+                                    <div class="chart-container" style="position: relative; height:300px;">
+                                        <canvas id="student-score-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="chart-card p-4 rounded-4 h-100">
+                                    <h5 class="fw-bold mb-4">Pending Tasks</h5>
+                                    <div id="student-dashboard-tasks" class="list-group list-group-flush">
+                                        <!-- Injected via JS -->
+                                        <p class="text-muted small">No pending tasks today!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: Student Tasks -->
+                    <div id="panel-student-tasks" class="dashboard-panel d-none">
+                        <div class="card panel-card rounded-4 border-0">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4">Assigned Daily Tasks</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Task Title</th>
+                                                <th>Description</th>
+                                                <th>Due Date</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="student-tasks-table-body">
+                                            <!-- Injected via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Task Modal -->
+                        <div class="modal fade" id="submitTaskModal" tabindex="-1" aria-labelledby="submitTaskModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content glass-modal border-0 text-white">
+                                    <div class="modal-header border-bottom border-light border-opacity-10">
+                                        <h5 class="modal-title fw-bold" id="submitTaskModalLabel">Submit Task</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="submit-task-form">
+                                        <div class="modal-body p-4">
+                                            <input type="hidden" id="submit-task-id">
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Task Name</label>
+                                                <h6 id="submit-task-title" class="fw-bold">Array Problems</h6>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="submission-link" class="form-label">Submission Link (GitHub/Drive/Doc) *</label>
+                                                <input type="url" class="form-control bg-dark border-secondary text-white" id="submission-link" placeholder="https://github.com/..." required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top border-light border-opacity-10">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Submit Answers</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 3: Student Mock Tests -->
+                    <div id="panel-student-tests" class="dashboard-panel d-none">
+                        <!-- Mock Tests List View -->
+                        <div id="tests-list-view" class="row g-4">
+                            <!-- Cards injected via JS -->
+                        </div>
+
+                        <!-- Active Quiz Attempt View (Hidden by default) -->
+                        <div id="quiz-attempt-view" class="card panel-card rounded-4 border-0 d-none">
+                            <div class="card-header bg-transparent border-bottom border-secondary border-opacity-10 p-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="fw-bold mb-1" id="active-quiz-title">Mock Test</h4>
+                                    <span class="text-muted small" id="active-quiz-desc">Quiz Description</span>
+                                </div>
+                                <div class="quiz-timer-badge px-3 py-2 bg-danger-subtle text-danger rounded-3 fw-bold">
+                                    <i class="fa-regular fa-clock me-2"></i><span id="quiz-timer">15:00</span>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <form id="quiz-form">
+                                    <div id="quiz-questions-container" class="mb-4">
+                                        <!-- Injected questions -->
+                                    </div>
+                                    <button type="submit" class="btn btn-success px-4 py-2 fw-semibold">
+                                        <i class="fa-solid fa-paper-plane me-2"></i>Submit Test
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 4: Student Scores -->
+                    <div id="panel-student-scores" class="dashboard-panel d-none">
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+                                <div class="card panel-card rounded-4 border-0 h-100">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Historical Performance Chart</h5>
+                                        <div class="chart-container" style="position: relative; height:300px;">
+                                            <canvas id="student-score-history-chart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card panel-card rounded-4 border-0 h-100">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Mock Test Attempts Log</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Test Title</th>
+                                                        <th>Score</th>
+                                                        <th>Percentage</th>
+                                                        <th>Date Taken</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="student-scores-table-body">
+                                                    <!-- Injected via JS -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 5: Student Interview Feedback -->
+                    <div id="panel-student-feedback" class="dashboard-panel d-none">
+                        <div class="row g-4" id="student-feedback-container">
+                            <!-- Cards injected via JS -->
+                        </div>
+                    </div>
+
+
+                    <!-- ---------------------------------------------------- -->
+                    <!-- ADMIN VIEWS -->
+                    <!-- ---------------------------------------------------- -->
+
+                    <!-- Panel 6: Admin Dashboard Overview -->
+                    <div id="panel-admin-dashboard" class="dashboard-panel d-none">
+                        <!-- Stats Row -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Registered Students</span>
+                                        <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                                            <i class="fa-solid fa-users"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-admin-students">0</h3>
+                                    <p class="text-muted small mb-0">Total candidates</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Daily Tasks</span>
+                                        <div class="stat-icon-wrapper bg-success-subtle text-success">
+                                            <i class="fa-solid fa-list-check"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-admin-tasks">0</h3>
+                                    <p class="text-muted small mb-0">Assigned tasks</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Mock Tests Available</span>
+                                        <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+                                            <i class="fa-solid fa-file-invoice"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-admin-tests">0</h3>
+                                    <p class="text-muted small mb-0">Created test modules</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-3">
+                                <div class="stat-card p-4 rounded-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-muted fw-medium">Interview Feedbacks</span>
+                                        <div class="stat-icon-wrapper bg-info-subtle text-info">
+                                            <i class="fa-solid fa-comments"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="fw-bold mb-1" id="stat-admin-feedbacks">0</h3>
+                                    <p class="text-muted small mb-0">Completed reviews</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphical Overview -->
+                        <div class="row g-4">
+                            <div class="col-lg-8">
+                                <div class="chart-card p-4 rounded-4">
+                                    <h5 class="fw-bold mb-4">Mock Test Class Performance (Average %)</h5>
+                                    <div class="chart-container" style="position: relative; height:320px;">
+                                        <canvas id="admin-performance-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="chart-card p-4 rounded-4 h-100">
+                                    <h5 class="fw-bold mb-4">Quick Links</h5>
+                                    <div class="d-grid gap-3">
+                                        <button class="btn btn-outline-primary text-start p-3 rounded-3" onclick="navigateTo('admin-tasks')">
+                                            <i class="fa-solid fa-plus-circle me-3"></i>Create Daily Task
+                                        </button>
+                                        <button class="btn btn-outline-success text-start p-3 rounded-3" onclick="navigateTo('admin-tests')">
+                                            <i class="fa-solid fa-file-medical me-3"></i>Create Mock Test
+                                        </button>
+                                        <button class="btn btn-outline-info text-start p-3 rounded-3" onclick="navigateTo('admin-feedback')">
+                                            <i class="fa-solid fa-user-check me-3"></i>Submit Mock Interview Feedback
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 7: Admin Manage Tasks -->
+                    <div id="panel-admin-tasks" class="dashboard-panel d-none">
+                        <div class="row g-4">
+                            <div class="col-md-5">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Assign New Daily Task</h5>
+                                        <form id="create-task-form">
+                                            <div class="mb-3">
+                                                <label for="task-title" class="form-label">Task Title *</label>
+                                                <input type="text" class="form-control" id="task-title" placeholder="e.g. Basic SQL Queries" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="task-desc" class="form-label">Description *</label>
+                                                <textarea class="form-control" id="task-desc" rows="4" placeholder="Detail instructions, links, problems to solve..." required></textarea>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="task-duedate" class="form-label">Due Date *</label>
+                                                <input type="date" class="form-control" id="task-duedate" required>
+                                            </div>
+                                            <button type="submit" id="create-task-submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                                                <i class="fa-solid fa-plus-circle me-2"></i>Assign Task
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Assigned Tasks History</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Task Title</th>
+                                                        <th>Due Date</th>
+                                                        <th>Created At</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="admin-tasks-table-body">
+                                                    <!-- Injected via JS -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 8: Admin Manage Tests -->
+                    <div id="panel-admin-tests" class="dashboard-panel d-none">
+                        <div class="row g-4">
+                            <div class="col-lg-5">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Create Mock Test</h5>
+                                        <form id="create-test-form">
+                                            <div class="mb-3">
+                                                <label for="test-title" class="form-label">Test Title *</label>
+                                                <input type="text" class="form-control" id="test-title" placeholder="e.g. Java Collections" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="test-desc" class="form-label">Description *</label>
+                                                <textarea class="form-control" id="test-desc" rows="2" placeholder="Instructions for the test" required></textarea>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="test-duration" class="form-label">Duration (Minutes) *</label>
+                                                <input type="number" class="form-control" id="test-duration" value="15" min="5" required>
+                                            </div>
+                                            
+                                            <h6 class="fw-bold border-top pt-3 mb-3">Add Questions</h6>
+                                            <div id="admin-questions-list" class="mb-3">
+                                                <!-- Dynamic single question builder cards -->
+                                            </div>
+                                            
+                                            <button type="button" class="btn btn-outline-secondary w-100 mb-4 fw-semibold" id="add-question-builder-btn">
+                                                <i class="fa-solid fa-plus me-2"></i>Add Question Option
+                                            </button>
+                                            
+                                            <button type="submit" id="create-test-submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                                                <i class="fa-solid fa-save me-2"></i>Create and Publish Test
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-7">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Created Mock Tests</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Test Title</th>
+                                                        <th>Duration</th>
+                                                        <th>Created At</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="admin-tests-table-body">
+                                                    <!-- Injected via JS -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 9: Admin Score Tracking -->
+                    <div id="panel-admin-scores" class="dashboard-panel d-none">
+                        <div class="card panel-card rounded-4 border-0">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4">Student Placement Score Registry</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Student Name</th>
+                                                <th>Roll Number</th>
+                                                <th>Mock Test</th>
+                                                <th>Score Obtained</th>
+                                                <th>Percentage</th>
+                                                <th>Date Taken</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-scores-table-body">
+                                            <!-- Injected via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 10: Admin Interview Feedback -->
+                    <div id="panel-admin-feedback" class="dashboard-panel d-none">
+                        <div class="row g-4">
+                            <div class="col-lg-5">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Record Interview Assessment</h5>
+                                        <form id="create-feedback-form">
+                                            <div class="mb-3">
+                                                <label for="feedback-student-id" class="form-label">Select Student *</label>
+                                                <select class="form-select" id="feedback-student-id" required>
+                                                    <option value="" disabled selected>Select a student</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="feedback-interviewer" class="form-label">Interviewer Name *</label>
+                                                    <input type="text" class="form-control" id="feedback-interviewer" placeholder="e.g. John Doe" required>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="feedback-date" class="form-label">Interview Date *</label>
+                                                    <input type="date" class="form-control" id="feedback-date" required>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row mb-3">
+                                                <div class="col-4">
+                                                    <label for="feedback-comm" class="form-label">Comm (1-10)</label>
+                                                    <input type="number" class="form-control" id="feedback-comm" min="1" max="10" value="8" required>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="feedback-tech" class="form-label">Tech (1-10)</label>
+                                                    <input type="number" class="form-control" id="feedback-tech" min="1" max="10" value="8" required>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="feedback-coding" class="form-label">Coding (1-10)</label>
+                                                    <input type="number" class="form-control" id="feedback-coding" min="1" max="10" value="8" required>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-4">
+                                                <label for="feedback-comments" class="form-label">Evaluator Comments & Recommendations *</label>
+                                                <textarea class="form-control" id="feedback-comments" rows="4" placeholder="Detail strengths, weak areas, and general remarks..." required></textarea>
+                                            </div>
+                                            
+                                            <button type="submit" id="create-feedback-submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                                                <i class="fa-solid fa-save me-2"></i>Save Assessment
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-7">
+                                <div class="card panel-card rounded-4 border-0">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-4">Interview Evaluations Log</h5>
+                                        <div id="admin-feedbacks-list-container">
+                                            <!-- Injected feedback cards/lists via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom SPA Routing and Logic -->
+    <script src="js/app.js"></script>
+</body>
+</html>
